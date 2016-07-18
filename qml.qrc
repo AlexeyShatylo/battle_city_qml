@@ -68,6 +68,6 @@
         <file>img/Сoncrete_quarter.png</file>
         <file>Cell.qml</file>
         <file>Tank.qml</file>
-        <file>levels/level1.txt</file>
+        <file>levels/level1_tile.txt</file>
     </qresource>
 </RCC>

@@ -2,15 +2,18 @@
 
 Shape::Shape(QObject *parent) : QObject(parent)
 {
-createMap();
+    m_yCoord = 200;
+    m_xCoord = 300;
+    m_source = "qrc:/img/PlayerUp.png";
+    m_direction = 0;
 }
 
-qreal Shape::yCoord() const
+int Shape::yCoord() const
 {
     return m_yCoord;
 }
 
-qreal Shape::xCoord() const
+int Shape::xCoord() const
 {
     return m_xCoord;
 }
@@ -40,7 +43,7 @@ void Shape::setHp(int hp)
     m_hp = hp;
 }
 
-void Shape::setYCoord(const qreal &yCoord)
+void Shape::setYCoord(const int &yCoord)
 {
     if (m_yCoord != yCoord) {
         m_yCoord = yCoord;
@@ -51,7 +54,6 @@ void Shape::setYCoord(const qreal &yCoord)
 void Shape::setDirection(int direction)
 {
     if (m_direction != direction) {
-
         m_direction = direction;
         emit directionChanged(direction);
     }
@@ -70,7 +72,7 @@ void Shape::setType(int type)
     m_type = type;
 }
 
-void Shape::setXCoord(const qreal &xCoord)
+void Shape::setXCoord(const int &xCoord)
 {
     if (m_xCoord != xCoord) {
         m_xCoord = xCoord;

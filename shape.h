@@ -12,8 +12,8 @@ class Shape : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(qreal xCoord READ xCoord WRITE setXCoord NOTIFY xCoordChanged)
-    Q_PROPERTY(qreal yCoord READ yCoord WRITE setYCoord NOTIFY yCoordChanged)
+    Q_PROPERTY(int xCoord READ xCoord WRITE setXCoord NOTIFY xCoordChanged)
+    Q_PROPERTY(int yCoord READ yCoord WRITE setYCoord NOTIFY yCoordChanged)
     Q_PROPERTY(int type READ type WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(int direction READ direction WRITE setDirection NOTIFY directionChanged)
@@ -22,35 +22,32 @@ class Shape : public QObject
 public:
     explicit Shape(QObject *parent = 0);
 
-    void setYCoord(const qreal &yCoord);
-    void setXCoord(const qreal &xCoord);
+    void setYCoord(const int &yCoord);
+    void setXCoord(const int &xCoord);
     void setType(int type);
     void setSource(const QString &source);
     void setDirection(int direction);
     void setHp(int hp);
 
+    int yCoord() const;
+    int xCoord() const;
+    int hp() const;
     int type() const;
-    qreal yCoord() const;
-    qreal xCoord() const;
     QString source() const;
     int direction() const;
-
-    void createMap();
-    void createItem(qreal x, qreal y, int tp, QString src, int dir, int health);
-    int hp() const;
 
 private:
 
     int m_type;
-    qreal m_xCoord;
-    qreal m_yCoord;
+    int m_xCoord;
+    int m_yCoord;
     QString m_source;
     int m_direction;
     int m_hp;
 
 signals:
-    void xCoordChanged(qreal x);
-    void yCoordChanged(qreal y);
+    void xCoordChanged(int x);
+    void yCoordChanged(int y);
     void typeChanged(int type);
     void sourceChanged(QString src);
     void directionChanged(int dir);
