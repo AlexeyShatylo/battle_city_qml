@@ -19,14 +19,16 @@ bool Game::mapLoaded ()
     QTextStream in (&fl);
     QString str (fl.readLine());
     m_map = str;
+
     if(!m_map.isEmpty()) {
         return true;
     }
+    return false;
 }
 
 int Game::getQty() const
 {
-    m_tileList.size();
+    return m_tileList.size();
 }
 
 bool Game::initTiles()
@@ -49,7 +51,9 @@ bool Game::initTiles()
             level += 1 ;
         }
     }
+
     emit created();
+    return true;
 }
 
 int Game::windowWidth() const

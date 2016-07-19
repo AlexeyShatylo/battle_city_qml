@@ -15,7 +15,7 @@ Item {
     }
     Image {
         id: img
-        source: tmp.source
+        source: "./img/PlayerUp.png"
         width: root.width
         height: root.height
     }

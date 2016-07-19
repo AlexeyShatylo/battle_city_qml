@@ -14,9 +14,10 @@ ApplicationWindow {
         anchors.fill: parent
         color: "gray"
         Rectangle {
+
             id:scene
-            width: 700
-            height: 700
+            width: 676
+            height: 676
 
             color: "black"
             anchors.centerIn: parent
@@ -26,37 +27,25 @@ ApplicationWindow {
                 if (cmpnt.status === Component.Ready){
                     game = cmpnt.createObject(scene);
 
-                    console.log(game.gamedata.getTile(1).type);
-                }
-                for (var i = 0; i < game.gamedata.qty ; i++) {
-                    var tiletype = game.gamedata.getTile(i).type;
-                    console.log( "Number" + i + " | " +  game.gamedata.getTile(i).type)
-                    switch (tiletype) {
-                    case 0:
-                        game.gamedata.getTile(i).source = "";
-                        break;
-                    case 1:
-                        game.gamedata.getTile(i).source = "qrc:/img/Brick_quarter.png";
-                        break;
-                    case 2:
-                        game.gamedata.getTile(i).source = "qrc:/img/Сoncrete_quarter.png";
-                        break;
-                    }
-                }
-                for (var j = 0; j <game.gamedata.qty; j++ ) {
-                    var component = Qt.createComponent("Cell.qml")
-                    if (component.status === Component.Ready){
-                        component.createObject(scene,{"tile": game.gamedata.getTile(j)});
+                    for (var i = 0; i < game.gamedata.qty ; i++) {
+                        switch (game.gamedata.getTile(i).type) {
+                        case 0:
+                            break;
+                        case 1:
+                            game.gamedata.getTile(i).source = "qrc:/img/Brick_quarter.png";
+                            break;
+                        case 2:
+                            game.gamedata.getTile(i).source = "qrc:/img/Сoncrete_quarter.png";
+                            break;
+                        }
+                        var component = Qt.createComponent("Cell.qml")
+                        if (component.status === Component.Ready){
+                            component.createObject(scene,{"iconSource": game.gamedata.getTile(i).source, "x": game.gamedata.getTile(i).xCoord, "y": game.gamedata.getTile(i).yCoord, });
 
+                        }
                     }
                 }
             }
-        }
-    }
-    Connections{
-        target: game
-        onCreated:{
-            console.log (lala)
         }
     }
 }
