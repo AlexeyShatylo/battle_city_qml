@@ -22,8 +22,8 @@ class Shape : public QObject
 public:
     explicit Shape(QObject *parent = 0);
 
-    void setYCoord(const int &yCoord);
-    void setXCoord(const int &xCoord);
+    Q_INVOKABLE void setYCoord(const int &yCoord);
+    Q_INVOKABLE void setXCoord(const int &xCoord);
     void setType(int type);
     void setSource(const QString &source);
     void setDirection(int direction);

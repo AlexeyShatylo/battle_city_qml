@@ -2,10 +2,13 @@
 
 Shape::Shape(QObject *parent) : QObject(parent)
 {
-    m_yCoord = 200;
-    m_xCoord = 300;
-    m_source = "qrc:/img/PlayerUp.png";
+    m_type = 0;
     m_direction = 0;
+    m_source = "";
+    m_hp = 0;
+    m_xCoord = 0;
+    m_yCoord = 0;
+
 }
 
 int Shape::yCoord() const

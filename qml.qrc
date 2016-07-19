@@ -69,5 +69,6 @@
         <file>Cell.qml</file>
         <file>Tank.qml</file>
         <file>levels/level1_tile.txt</file>
+        <file>Game.qml</file>
     </qresource>
 </RCC>

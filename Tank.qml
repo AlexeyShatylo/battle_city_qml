@@ -25,7 +25,11 @@ Item {
         }
         if (event.key === Qt.Key_Up) {
             tmp.direction = 0;
-            tmp.yCoord = tmp.yCoord - 5
+            if (tmp.yCoord > 0 ) {
+                tmp.yCoord = tmp.yCoord - 5
+                console.log(tmp.yCoord)
+            }
+
         }
         if (event.key === Qt.Key_Right) {
             tmp.direction = 1;
