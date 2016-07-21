@@ -8,7 +8,6 @@ Shape::Shape(QObject *parent) : QObject(parent)
     m_hp = 0;
     m_xCoord = 0;
     m_yCoord = 0;
-
 }
 
 int Shape::yCoord() const
@@ -34,6 +33,19 @@ int Shape::type() const
 int Shape::direction() const
 {
     return m_direction;
+}
+
+bool Shape::traversable() const
+{
+    return m_traversable;
+}
+
+void Shape::setTraversable(bool traversable)
+{
+    if(traversable != m_traversable){
+        m_traversable = traversable;
+        emit traversableChanged(traversable);
+    }
 }
 
 int Shape::hp() const

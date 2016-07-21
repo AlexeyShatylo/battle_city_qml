@@ -16,8 +16,8 @@ ApplicationWindow {
         Rectangle {
 
             id:scene
-            width: 676
-            height: 676
+            width: 676 //
+            height: 676 //
 
             color: "black"
             anchors.centerIn: parent
@@ -28,27 +28,57 @@ ApplicationWindow {
                     game = cmpnt.createObject(scene);
 
                     for (var i = 0; i < game.gamedata.qty ; i++) {
-                        switch (game.gamedata.getTile(i).type) {
+                        switch (game.gamedata.getItem(i).type) {
                         case 0:
                             break;
                         case 1:
-                            game.gamedata.getTile(i).source = "qrc:/img/Brick_quarter.png";
+                            game.gamedata.getItem(i).source = "qrc:/img/Brick_quarter.png";
+                            var Brick = Qt.createComponent("Cell.qml");
+                            if (Brick.status === Component.Ready){
+                                Brick.createObject(scene,{"cell": game.gamedata.getItem(i)});
+                            }
                             break;
                         case 2:
-                            game.gamedata.getTile(i).source = "qrc:/img/Сoncrete_quarter.png";
+                            game.gamedata.getItem(i).source = "qrc:/img/Сoncrete_quarter.png";
+                            var Сoncrete = Qt.createComponent("Cell.qml");
+                            if (Сoncrete.status === Component.Ready){
+                                Сoncrete.createObject(scene,{"cell": game.gamedata.getItem(i)});
+                            }
                             break;
-                        }
-                        var component = Qt.createComponent("Cell.qml")
-                        if (component.status === Component.Ready){
-                            component.createObject(scene,{"iconSource": game.gamedata.getTile(i).source, "x": game.gamedata.getTile(i).xCoord, "y": game.gamedata.getTile(i).yCoord, });
+                        case 7:
+                            game.gamedata.getItem(i).source = "qrc:/img/EnemyUp.png";
+                            var usetTankCmpnt = Qt.createComponent("aiTank.qml");
+                            if(usetTankCmpnt.status === Component.Ready) {
+                                console.log("I`m here")
+                                usetTankCmpnt.createObject(scene, {"cell": game.gamedata.getItem(i)});
+                            }
+                            break;
+                        case 9:
+                            game.gamedata.getItem(i).source = "qrc:/img/PlayerUp.png";
+                            var aiTank = Qt.createComponent("UserTank.qml");
+                            if(aiTank.status === Component.Ready) {
+                                console.log("I`m here")
+                                aiTank.createObject(scene, {"cell": game.gamedata.getItem(i)});
+                            }
+                            break;
+                        case 10:
+                            game.gamedata.getItem(i).source = "qrc:/img/base.png";
+                            var Base = Qt.createComponent("Base.qml");
+                            if (Base.status === Component.Ready) {
 
+                                Base.createObject(scene,{"cell": game.gamedata.getItem(i)});
+                            }
+                            break;
                         }
                     }
                 }
             }
         }
+
     }
 }
+
+
 
 
 

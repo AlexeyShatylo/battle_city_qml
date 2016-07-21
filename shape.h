@@ -18,10 +18,10 @@ class Shape : public QObject
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(int direction READ direction WRITE setDirection NOTIFY directionChanged)
     Q_PROPERTY(int hp READ hp WRITE setHp NOTIFY hpChanged)
+    Q_PROPERTY(bool traversable READ traversable WRITE setTraversable NOTIFY traversableChanged)
 
 public:
     explicit Shape(QObject *parent = 0);
-
     Q_INVOKABLE void setYCoord(const int &yCoord);
     Q_INVOKABLE void setXCoord(const int &xCoord);
     void setType(int type);
@@ -36,6 +36,9 @@ public:
     QString source() const;
     int direction() const;
 
+    bool traversable() const;
+    void setTraversable(bool traversable);
+
 private:
 
     int m_type;
@@ -44,7 +47,7 @@ private:
     QString m_source;
     int m_direction;
     int m_hp;
-
+    bool m_traversable;
 signals:
     void xCoordChanged(int x);
     void yCoordChanged(int y);
@@ -52,6 +55,7 @@ signals:
     void sourceChanged(QString src);
     void directionChanged(int dir);
     void hpChanged(int health);
+    void traversableChanged(bool tr);
 public slots:
 };
 

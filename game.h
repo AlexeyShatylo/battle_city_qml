@@ -7,23 +7,27 @@
 #include <QFile>
 #include <QTextStream>
 #include <QString>
+#include <QTimer>
+#include <Qtime>
+enum Behavior{Movement = 0, Shoot};
 
 class Game : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QList<Shape*> tankList READ tankList)
-    Q_PROPERTY(Shape* tile READ tile WRITE setTile NOTIFY tileChanged)
-    Q_PROPERTY(QList<Shape*> tileList READ tileList)
+    Q_PROPERTY(QList<Shape*> gameItemsContainer READ getGameItemsContainer )
     Q_PROPERTY(int windowWidth READ windowWidth WRITE setWindowWidth NOTIFY windowWidthChanged)
     Q_PROPERTY(int windowHeigth READ windowHeigth WRITE setWindowHeigth NOTIFY windowsHeigthChanged)
     Q_PROPERTY(int qty READ getQty )
 public:
     explicit Game(QObject *parent = 0);
-    void initTanks();
+
+    const double step = 13;
+
     bool initTiles();
     bool checkMovement();
-//    Q_INVOKABLE void gameStart();
-//    Q_INVOKABLE void move();
+    //    Q_INVOKABLE void gameStart();
+    //    Q_INVOKABLE void move();
     int windowWidth() const;
     void setWindowWidth(int windowWidth);
 
@@ -33,20 +37,31 @@ public:
     QList<Shape *> tankList() const;
     QList<Shape *> tileList() const;
 
-    Q_INVOKABLE Shape *getTile(int index);
-    void setTile(Shape *tile);
+    void setTile(Shape* tile);
 
     Shape *tile();
     bool mapLoaded();
     int getQty() const;
 
+    void initGameContainer();
+    QList<Shape *> getGameItemsContainer() const;
+
+    Q_INVOKABLE Shape* getTile(int index);
+    Q_INVOKABLE  Shape *getItem(int index);
+    Q_INVOKABLE bool move(Shape* tmp,int moveDir);
+    Q_INVOKABLE bool isMovepossible(Shape *tmp, int moveDir);
+    int shotOrMove();
+    int randomMove();
+    void init();
 private:
-    QList<Shape*> m_tankList;
-    QList<Shape*> m_tileList;
-    Shape* m_tile;
-    QString m_map;
     int m_windowWidth;
     int m_windowHeigth;
+    QList<Shape*> m_tankList;
+    QList<Shape*> m_tileList;
+    QList<Shape*> m_gameItemsContainer;
+    Shape* m_tile;
+    QString m_map;
+    QTimer* globalTimer;
 signals:
     void gameOver();
     void gameStarted();
@@ -55,6 +70,7 @@ signals:
     void tileChanged();
     void created();
 public slots:
+    void startGame();
 };
 
 #endif // GAME_H
