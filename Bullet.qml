@@ -1,21 +1,18 @@
-import QtQuick 2.5
+import QtQuick 2.0
 import shape 1.0
 Item {
     property MyObject cell
-    property bool passeble
 
     id: root
     width: 26
     height: 26
 
-    x: cell.xCoord
-    y: cell.yCoord
-
+    x: cell.xCoord -26
+    y: cell.yCoord - 26
     Image {
         id: img
-        source: cell.source
+        source: "qrc:/img/BulletLeft.png"
         width: root.width
         height: root.height
     }
-
 }

@@ -1,7 +1,16 @@
 import QtQuick 2.5
 import shape 1.0
 Item {
+
+    signal up()
+    signal rigth()
+    signal down()
+    signal left()
+    signal shooting()
+
     property MyObject cell
+    property MyGame game
+
     id: root
     focus: true
     width: 52
@@ -56,15 +65,17 @@ Item {
                 console.log("Y" + cell.yCoord)
             }
         }
+        if (event.key === Qt.Key_Space) {
+            shooting();
+        }
     }
     Connections {
         target: cell
-
         onDirectionChanged:{
             if(cell.direction === 0)
                 console.log("X" + cell.xCoord)
-                console.log("Y" + cell.yCoord)
-                img.rotation = 0
+            console.log("Y" + cell.yCoord)
+            img.rotation = 0
             if(cell.direction === 1) {
                 img.rotation = 90;
                 console.log("X" + cell.xCoord)
@@ -81,7 +92,6 @@ Item {
                 img.rotation = 270;
                 console.log("X" + cell.xCoord)
                 console.log("Y" + cell.yCoord)
-
             }
         }
     }

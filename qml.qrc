@@ -72,5 +72,6 @@
         <file>UserTank.qml</file>
         <file>Base.qml</file>
         <file>aiTank.qml</file>
+        <file>Bullet.qml</file>
     </qresource>
 </RCC>

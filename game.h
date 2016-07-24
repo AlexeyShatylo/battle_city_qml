@@ -49,7 +49,8 @@ public:
     Q_INVOKABLE Shape* getTile(int index);
     Q_INVOKABLE  Shape *getItem(int index);
     Q_INVOKABLE bool move(Shape* tmp,int moveDir);
-    Q_INVOKABLE bool isMovepossible(Shape *tmp, int moveDir);
+    Q_INVOKABLE bool isMovePossible(Shape *tmp, int moveDir);
+    Q_INVOKABLE Shape *shoot(Shape *shooter);
     int shotOrMove();
     int randomMove();
     void init();

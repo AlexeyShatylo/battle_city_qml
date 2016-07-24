@@ -8,7 +8,7 @@ Game::Game(QObject *parent) : QObject(parent)
     globalTimer = new QTimer(this);
     init();
     connect(globalTimer, SIGNAL(timeout()),this,SLOT(startGame()));
-    globalTimer->start(10);
+    globalTimer->start(100);
 
 }
 void Game::init() {
@@ -66,7 +66,7 @@ bool Game::mapLoaded ()
     return false;
 }
 
-bool Game::isMovepossible(Shape* tmp, int moveDir) {
+bool Game::isMovePossible(Shape* tmp, int moveDir) {
     tmp->setDirection(moveDir);
     if (moveDir == Direction::Up && tmp->yCoord() > 0 )
     {
@@ -79,13 +79,13 @@ bool Game::isMovepossible(Shape* tmp, int moveDir) {
     }
     if (moveDir == Direction::Right && tmp->xCoord() <  676 - 52)
     {
-        for (int i = 0; i < m_gameItemsContainer.size(); i++) {
-            if ((m_gameItemsContainer[i]->type() == ShapeType::Empty ) && (m_gameItemsContainer[i]->xCoord()) == (tmp->xCoord() + 52 + step)) {
-                return false;
+        for (int i = 0; i < m_tileList.size(); i++) {
+            if ((m_tileList.at(i)->type() == ShapeType::Empty ) && (m_tileList.at(i)->xCoord()) == (tmp->xCoord() + 52 + step)) {
+                break;
+            }else {
+                return true;
             }
         }
-        return true;
-
     }
     if (moveDir == Direction::Left && tmp->xCoord() < 0)
     {
@@ -104,6 +104,7 @@ bool Game::isMovepossible(Shape* tmp, int moveDir) {
             }
         }
     }
+    return false;
 }
 
 int Game::randomMove(){
@@ -119,25 +120,24 @@ int Game::shotOrMove(){
 
 void Game::startGame()
 {
+    Shape* currentTank;
     for (int i = 0; i < m_gameItemsContainer.size(); i++) {
-        if ( (ShapeType::AiTank == m_gameItemsContainer[i]->type())) {
-            bool som = shotOrMove();
-            if (som == Behavior::Movement) {
+        if ((ShapeType::AiTank == m_gameItemsContainer.at(i)->type())) {
+            bool sOm = shotOrMove();
+            currentTank = m_gameItemsContainer.at(i);
+            if (sOm == Behavior::Movement) {
                 int rm = randomMove();
-                move(m_gameItemsContainer[i], rm);
+                move(currentTank, rm);
             }
-            if (  som == Behavior::Shoot) {
-                Shape* bullet = new Shape(this);
-                bullet->setXCoord( m_gameItemsContainer[i]->xCoord()+ 26); // +26 for shooting from center of tank
-                bullet->setYCoord(m_gameItemsContainer[i]->yCoord() + 26);
-                bullet->setDirection(m_gameItemsContainer[i]->direction());
-                m_gameItemsContainer.append(bullet);
+            if (sOm == Behavior::Shoot) {
+                shoot(currentTank);
             }
         }
     }
 }
 bool Game::move(Shape* tmp, int moveDir) {
-    if(isMovepossible(tmp,moveDir)) {
+    bool isPossible  = isMovePossible(tmp,moveDir);
+    if(isPossible) {
         switch (moveDir) {
         case Direction::Up:
             tmp->setYCoord(tmp->yCoord() - step);
@@ -157,6 +157,22 @@ bool Game::move(Shape* tmp, int moveDir) {
         return true;
     }
     return false;
+}
+Shape* Game::shoot(Shape* shooter) {
+    Shape* bullet = new Shape();
+    bullet->setDirection(shooter->direction());
+    if (bullet->direction() == Direction::Up || bullet->direction() == Direction::Down) {
+
+        bullet->setXCoord( shooter->xCoord() + 26 );
+        bullet->setYCoord(shooter->yCoord());
+    }
+
+    if (bullet->direction() == Direction::Right || bullet->direction() == Direction::Left) {
+        bullet->setXCoord(shooter->xCoord() + 52);
+        bullet->setYCoord(shooter->yCoord() + 26);
+    }
+    m_gameItemsContainer.append(bullet);
+    return bullet;
 }
 
 bool Game::initTiles()
