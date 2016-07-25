@@ -6,8 +6,8 @@ Item {
     property bool passeble : false
 
     id: root
-    width: 52
-    height: 52
+    width: cell.width
+    height: cell.height
 
     x: cell.xCoord
     y: cell.yCoord

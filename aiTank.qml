@@ -5,25 +5,22 @@ Item {
     property MyObject cell
     id: root
     focus: true
-    width: 52
-    height: 52
-    x: cell.xCoord
-    y: cell.yCoord
+    width: cell.width
+    height: cell.height
+    x: cell.shapeRect.x - 26
+    y: cell.shapeRect.y - 26
 
     Image {
         id: img
         source: cell.source
-        width: 52
-        height: 52
-        anchors.centerIn: root
-
+        width: cell.width
+        height: cell.height
     }
     Connections {
         target: cell
         onDirectionChanged:{
             if(cell.direction === 0)
                 img.rotation = 0
-            console.log(root.x)
             if(cell.direction === 1) {
                 img.rotation = 90;
             }

@@ -24,7 +24,7 @@ Item {
         width: 52
         height: 52
         anchors.centerIn: root
-        scale: 0.9
+        rotation: cell.direction * 90
     }
     Keys.onPressed: {
         if (event.key === Qt.Key_Left || event.key === Qt.Key_Right
@@ -35,8 +35,6 @@ Item {
             if (cell.yCoord > 0 ) {
                 cell.yCoord = cell.yCoord - 13
                 event.accepted = true;
-                console.log("X" + cell.xCoord)
-                console.log("Y" + cell.yCoord)
             }
         }
         if (event.key === Qt.Key_Right) {
@@ -45,54 +43,23 @@ Item {
                 cell.xCoord = cell.xCoord + 13
                 event.accepted = true;
             }
-            console.log("X" + cell.xCoord)
-            console.log("Y" + cell.yCoord)
         }
         if (event.key === Qt.Key_Down) {
             cell.direction = 2;
             if(cell.yCoord < 676 - root.height)
                 cell.yCoord = cell.yCoord + 13
             event.accepted = true;
-            console.log("X" + cell.xCoord)
-            console.log("Y" + cell.yCoord)
         }
         if (event.key === Qt.Key_Left ) {
             cell.direction = 3;
             if(cell.xCoord > 0) {
                 cell.xCoord = cell.xCoord - 13
                 event.accepted = true;
-                console.log("X" + cell.xCoord)
-                console.log("Y" + cell.yCoord)
             }
         }
         if (event.key === Qt.Key_Space) {
             shooting();
         }
     }
-    Connections {
-        target: cell
-        onDirectionChanged:{
-            if(cell.direction === 0)
-                console.log("X" + cell.xCoord)
-            console.log("Y" + cell.yCoord)
-            img.rotation = 0
-            if(cell.direction === 1) {
-                img.rotation = 90;
-                console.log("X" + cell.xCoord)
-                console.log("Y" + cell.yCoord)
 
-            }
-            if(cell.direction === 2) {
-                img.rotation = 180;
-                console.log("X" + cell.xCoord)
-                console.log("Y" + cell.yCoord)
-
-            }
-            if(cell.direction === 3) {
-                img.rotation = 270;
-                console.log("X" + cell.xCoord)
-                console.log("Y" + cell.yCoord)
-            }
-        }
-    }
 }

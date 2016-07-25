@@ -16,6 +16,7 @@ ApplicationWindow {
         Rectangle {
             property MyGame gameContainer
             property Item playerTank
+            property var game
             id:scene
             width: 676 //
             height: 676 //
@@ -23,7 +24,6 @@ ApplicationWindow {
             color: "black"
             anchors.centerIn: parent
             Component.onCompleted: {
-                var game;
                 var cmpnt = Qt.createComponent("Game.qml")
                 if (cmpnt.status === Component.Ready){
                     game = cmpnt.createObject(scene);
@@ -44,14 +44,13 @@ ApplicationWindow {
                             game.gamedata.getItem(i).source = "qrc:/img/Сoncrete_quarter.png";
                             var Сoncrete = Qt.createComponent("Cell.qml");
                             if (Сoncrete.status === Component.Ready){
-                                Сoncrete.createObject(scene,{"cell": game.gamedata.getItem(i)});
+                                Сoncrete.createObject(scene,{"cell": game.gamedata.getItem(i),});
                             }
                             break;
                         case 7:
                             game.gamedata.getItem(i).source = "qrc:/img/EnemyUp.png";
                             var aiTank = Qt.createComponent("aiTank.qml");
                             if(aiTank.status === Component.Ready) {
-                                console.log("I`m here")
                                 aiTank.createObject(scene, {"cell": game.gamedata.getItem(i)});
                             }
                             break;
@@ -59,7 +58,6 @@ ApplicationWindow {
                             game.gamedata.getItem(i).source = "qrc:/img/PlayerUp.png";
                             var userTankCmpnt = Qt.createComponent("UserTank.qml");
                             if(userTankCmpnt.status === Component.Ready) {
-                                console.log("I`m here")
                                 playerTank = userTankCmpnt.createObject(scene, {"cell": game.gamedata.getItem(i), "game": game.gamedata});
                             }
                             break;
@@ -69,6 +67,7 @@ ApplicationWindow {
                             if (Base.status === Component.Ready) {
                                 Base.createObject(scene,{"cell": game.gamedata.getItem(i)});
                             }
+                            console.log(game.gamedata.getItem(i).getShapeRect)
                             break;
                         }
                     }
@@ -77,7 +76,7 @@ ApplicationWindow {
             Connections {
                 target: scene.playerTank
                 onShooting: {
-                    console.log(scene.playerTank.cell)
+                    console.log(scene.playerTank.cell.shapeRect)
                     console.log ("hello")
                     var bullet = scene.gameContainer.shoot(scene.playerTank.cell)
                     var bulletCmpnt = Qt.createComponent("Bullet.qml");

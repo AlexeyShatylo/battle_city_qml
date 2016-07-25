@@ -2,11 +2,9 @@ import QtQuick 2.5
 import shape 1.0
 Item {
     property MyObject cell
-    property bool passeble
-
     id: root
-    width: 26
-    height: 26
+    width: cell.width
+    height: cell.height
 
     x: cell.xCoord
     y: cell.yCoord
