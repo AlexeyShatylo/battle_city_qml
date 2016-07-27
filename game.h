@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QTime>
 #include <QRect>
+#include <QQmlEngine>
 enum Behavior{Movement = 0, Shoot};
 
 class Game : public QObject
@@ -19,15 +20,15 @@ class Game : public QObject
     Q_PROPERTY(QList<Shape*> gameItemsContainer READ getGameItemsContainer )
     Q_PROPERTY(int windowWidth READ windowWidth WRITE setWindowWidth NOTIFY windowWidthChanged)
     Q_PROPERTY(int windowHeigth READ windowHeigth WRITE setWindowHeigth NOTIFY windowsHeigthChanged)
+    Q_PROPERTY(Shape* shooter READ shooter WRITE setShooter NOTIFY shooterChanged)
     Q_PROPERTY(int qty READ getQty )
-
 private:
     int m_windowWidth;
     int m_windowHeigth;
     QList<Shape*> m_tankList;
     QList<Shape*> m_tileList;
     QList<Shape*> m_gameItemsContainer;
-    Shape* m_tile;
+    Shape* m_shooter;
     QString m_map;
     QTimer* globalTimer;
 
@@ -37,7 +38,8 @@ public:
     const int step = 13;
     const int tileWidth = 26;
     const int tileHeigth = 26;
-
+    const int tankWidth= 52;
+    const int tankHeigth = 52;
 
     bool initTiles();
     bool checkMovement();
@@ -49,35 +51,35 @@ public:
     int getQty() const;
     Q_INVOKABLE Shape* getTile(int index);
     Q_INVOKABLE  Shape *getItem(int index);
-    QList<Shape *> getGameItemsContainer() const;
 
 
-    QList<Shape *> tankList() const;
-    QList<Shape *> tileList() const;
+    QList<Shape*> getGameItemsContainer() const;
+    QList<Shape*> tankList() const;
+    QList<Shape*> tileList() const;
 
     void setWindowWidth(int windowWidth);
     void setWindowHeigth(int windowHeigth);
-    void setTile(Shape* tile);
 
-    Shape *tile();
-
-
-    Q_INVOKABLE bool move(Shape* tmp,int moveDir);
-    Q_INVOKABLE bool isMovePossible(Shape *tmp, int moveDir);
+    Q_INVOKABLE bool move(Shape* movingShape,int moveDir);
+    Q_INVOKABLE bool isMovePossible(Shape *movingShape, int moveDir);
     Q_INVOKABLE Shape *shoot(Shape *shooter);
     int shotOrMove();
     int randomMove();
     void init();
 
+    Shape *shooter() const;
+    void setShooter(Shape *shooter);
 
 signals:
     void gameOver();
     void gameStarted();
-    void windowWidthChanged();
-    void windowsHeigthChanged();
-    void tileChanged();
-    void created();
+    void windowWidthChanged(int w);
+    void windowsHeigthChanged(int h);
+    void shooterChanged(Shape*);
+
 public slots:
+
+private slots:
     void startGame();
 };
 

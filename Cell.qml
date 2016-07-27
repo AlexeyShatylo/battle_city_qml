@@ -15,5 +15,4 @@ Item {
         width: root.width
         height: root.height
     }
-
 }

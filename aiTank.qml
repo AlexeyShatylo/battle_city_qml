@@ -3,12 +3,13 @@ import shape 1.0
 
 Item {
     property MyObject cell
+    signal shooting()
     id: root
     focus: true
     width: cell.width
     height: cell.height
-    x: cell.shapeRect.x - 26
-    y: cell.shapeRect.y - 26
+    x: cell.shapeRect.x - 13
+    y: cell.shapeRect.y - 13
 
     Image {
         id: img
@@ -30,6 +31,12 @@ Item {
             if(cell.direction === 3) {
                 img.rotation = 270;
             }
+        }
+    }
+    Connections {
+        target: cell
+        onShooting: {
+            shooting();
         }
     }
 }

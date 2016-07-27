@@ -23,6 +23,7 @@ class Shape : public QObject
     Q_PROPERTY(int hp READ hp WRITE setHp NOTIFY hpChanged)
     Q_PROPERTY(bool traversable READ traversable WRITE setTraversable NOTIFY traversableChanged)
     Q_PROPERTY(QRect shapeRect READ shapeRect WRITE setShapeRect NOTIFY shapeRectChanged)
+    Q_PROPERTY(NOTIFY shooting)
 public:
     explicit Shape(QObject *parent = 0);
     Q_INVOKABLE void setYCoord(const int &yCoord);
@@ -49,9 +50,10 @@ public:
 
     int height() const;
     void setHeight(int height);
-    void setShapeRect(const QRect &shapeRect);
     Q_INVOKABLE int shapeRectCenterX();
     Q_INVOKABLE int shapeRectCenterY();
+    void setShapeRect(const QRect &shapeRect);
+
 private:
 
     int m_xCoord;
@@ -78,8 +80,9 @@ signals:
     void directionChanged(int dir);
     void hpChanged(int health);
     void traversableChanged(bool tr);
-
+    void shooting();
 public slots:
+    void shoot();
 };
 
 #endif // SHAPE_H

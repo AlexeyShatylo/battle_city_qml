@@ -7,7 +7,6 @@ Item {
     signal down()
     signal left()
     signal shooting()
-
     property MyObject cell
     property MyGame game
 
@@ -61,5 +60,4 @@ Item {
             shooting();
         }
     }
-
 }

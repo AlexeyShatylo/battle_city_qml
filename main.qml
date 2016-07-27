@@ -16,10 +16,12 @@ ApplicationWindow {
         Rectangle {
             property MyGame gameContainer
             property Item playerTank
+            property Item aITank
             property var game
+
             id:scene
-            width: 676 //
-            height: 676 //
+            width: 676
+            height: 676
 
             color: "black"
             anchors.centerIn: parent
@@ -37,7 +39,7 @@ ApplicationWindow {
                             game.gamedata.getItem(i).source = "qrc:/img/Brick_quarter.png";
                             var Brick = Qt.createComponent("Cell.qml");
                             if (Brick.status === Component.Ready){
-                                Brick.createObject(scene,{"cell": game.gamedata.getItem(i)});
+                               Brick.createObject(scene,{"cell": game.gamedata.getItem(i)});
                             }
                             break;
                         case 2:
@@ -50,8 +52,8 @@ ApplicationWindow {
                         case 7:
                             game.gamedata.getItem(i).source = "qrc:/img/EnemyUp.png";
                             var aiTank = Qt.createComponent("aiTank.qml");
-                            if(aiTank.status === Component.Ready) {
-                                aiTank.createObject(scene, {"cell": game.gamedata.getItem(i)});
+                            if (aiTank.status === Component.Ready) {
+                                  aITank = aiTank.createObject(scene, {"cell": game.gamedata.getItem(i)});
                             }
                             break;
                         case 9:
@@ -67,21 +69,38 @@ ApplicationWindow {
                             if (Base.status === Component.Ready) {
                                 Base.createObject(scene,{"cell": game.gamedata.getItem(i)});
                             }
-                            console.log(game.gamedata.getItem(i).getShapeRect)
                             break;
+
                         }
                     }
                 }
+
             }
+            Connections{
+                target: scene.aITank
+                 onShooting: {
+                     console.log(scene.gameContainer.qty)
+                 }
+
+            }
+
             Connections {
                 target: scene.playerTank
                 onShooting: {
-                    console.log(scene.playerTank.cell.shapeRect)
-                    console.log ("hello")
                     var bullet = scene.gameContainer.shoot(scene.playerTank.cell)
                     var bulletCmpnt = Qt.createComponent("Bullet.qml");
                     if(bulletCmpnt.status === Component.Ready){
                         bulletCmpnt.createObject(scene,{"cell": bullet})
+                    }
+                }
+            }
+            Connections {
+                target: scene.aITank
+                onShooting: {
+                    var bullett = scene.gameContainer.shoot(scene.aITank.cell)
+                    var bulletCmpnt = Qt.createComponent("Bullet.qml");
+                    if (bulletCmpnt.status === Component.Ready) {
+                        bulletCmpnt.createObject(scene,{"cell": bullett})
                     }
                 }
             }

@@ -10,12 +10,6 @@ Shape::Shape(QObject *parent) : QObject(parent)
     m_yCoord = 0;
     m_height = 0;
     m_width = 0;
-//    m_shapeRect.setRect(m_xCoord,m_yCoord,m_width,m_height);
-//    connect(this,SIGNAL(xCoordChanged(int)), this, SLOT(setShapeRect(QRect tmp(m_xCoord,m_yCoord,m_width,m_height))));
-//    connect(this,SIGNAL(yCoordChanged(int)), this, Shape::setShapeRect(QRect(m_xCoord,m_yCoord,m_width,m_height)));
-//    connect(this,SIGNAL(heightChanged(int)), this, Shape::setShapeRect(QRect(m_xCoord,m_yCoord,m_width,m_height)));
-//    connect(this,SIGNAL(widthChanged(int)),  this, Shape::setShapeRect(QRect(m_xCoord,m_yCoord,m_width,m_height)));
-
 }
 
 int Shape::yCoord() const
@@ -57,11 +51,16 @@ void Shape::setTraversable(bool traversable)
 }
 
 void Shape::setShapeRect(const QRect &shapeRect)
-{//setRect(m_xCoord,m_yCoord,m_width,m_height);
+{
     if (m_shapeRect != shapeRect) {
         m_shapeRect = shapeRect;
         emit shapeRectChanged();
     }
+}
+
+void Shape::shoot()
+{
+    emit shooting();
 }
 
 int Shape::shapeRectCenterX()
@@ -144,7 +143,10 @@ void Shape::setSource(const QString &source)
 
 void Shape::setType(int type)
 {
-    m_type = type;
+    if(m_type != type){
+        m_type = type;
+        emit typeChanged(type);
+    }
 }
 
 void Shape::setXCoord(const int &xCoord)

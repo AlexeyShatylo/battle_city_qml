@@ -1,16 +1,14 @@
 import QtQuick 2.0
 import shape 1.0
-Rectangle{
+Item{
+
     property MyObject cell
-    border.color: "white"
-    border.width: 2
     id: root
     width: cell.width
     height: cell.height
 
-    x: cell.shapeRect.x - 13
-    y: cell.shapeRect.y - 13
-
+    x: cell.xCoord - 13
+    y: cell.yCoord - 13
     Image {
         id: img
         source: "qrc:/img/BulletUp.png"
@@ -18,10 +16,10 @@ Rectangle{
         height: root.height
         rotation: cell.direction * 90
     }
-    Connections{
-        target: root
-        onXChanged: {
-            console.log(root.x)
+    onXChanged: {
+        if(root.x === 13 || root.x === 676 - 13){
+            root.destroy();
+
         }
     }
 }
