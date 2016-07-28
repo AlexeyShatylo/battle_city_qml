@@ -7,19 +7,23 @@ Item{
     width: cell.width
     height: cell.height
 
-    x: cell.xCoord - 13
-    y: cell.yCoord - 13
+    x: cell.xCoord - 26
+    y: cell.yCoord - 26
     Image {
         id: img
         source: "qrc:/img/BulletUp.png"
         width: root.width
         height: root.height
         rotation: cell.direction * 90
+        scale : 0.5
     }
-    onXChanged: {
-        if(root.x === 13 || root.x === 676 - 13){
-            root.destroy();
 
+    Connections{
+        target: cell
+        onHpChanged: {
+            if (cell.hp === 0) {
+                root.destroy();
+            }
         }
     }
 }

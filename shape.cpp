@@ -5,7 +5,7 @@ Shape::Shape(QObject *parent) : QObject(parent)
     m_type = 0;
     m_direction = 0;
     m_source = "";
-    m_hp = 0;
+    m_hp = 1;
     m_xCoord = 0;
     m_yCoord = 0;
     m_height = 0;
@@ -113,7 +113,10 @@ int Shape::hp() const
 
 void Shape::setHp(int hp)
 {
-    m_hp = hp;
+    if(m_hp != hp) {
+     m_hp = hp;
+     emit hpChanged(hp);
+    }
 }
 
 void Shape::setYCoord(const int &yCoord)

@@ -6,7 +6,7 @@ Item {
     signal rigth()
     signal down()
     signal left()
-    signal shooting()
+    signal shooted()
     property MyObject cell
     property MyGame game
 
@@ -25,39 +25,30 @@ Item {
         anchors.centerIn: root
         rotation: cell.direction * 90
     }
+    onXChanged: {
+        console.log(root.x)
+    }
+    onYChanged: {
+        console.log(root.y)
+    }
+
     Keys.onPressed: {
-        if (event.key === Qt.Key_Left || event.key === Qt.Key_Right
-                || event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
-        }
         if (event.key === Qt.Key_Up) {
-            cell.direction = 0;
-            if (cell.yCoord > 0 ) {
-                cell.yCoord = cell.yCoord - 13
-                event.accepted = true;
-            }
+            up();
         }
         if (event.key === Qt.Key_Right) {
-            cell.direction = 1;
-            if (cell.xCoord < 676 - root.width) {
-                cell.xCoord = cell.xCoord + 13
-                event.accepted = true;
-            }
+            rigth();
+
         }
         if (event.key === Qt.Key_Down) {
-            cell.direction = 2;
-            if(cell.yCoord < 676 - root.height)
-                cell.yCoord = cell.yCoord + 13
-            event.accepted = true;
+            down();
         }
         if (event.key === Qt.Key_Left ) {
-            cell.direction = 3;
-            if(cell.xCoord > 0) {
-                cell.xCoord = cell.xCoord - 13
-                event.accepted = true;
-            }
+            left();
         }
         if (event.key === Qt.Key_Space) {
-            shooting();
+            shooted();
         }
     }
+
 }

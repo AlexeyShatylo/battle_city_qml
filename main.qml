@@ -39,7 +39,7 @@ ApplicationWindow {
                             game.gamedata.getItem(i).source = "qrc:/img/Brick_quarter.png";
                             var Brick = Qt.createComponent("Cell.qml");
                             if (Brick.status === Component.Ready){
-                               Brick.createObject(scene,{"cell": game.gamedata.getItem(i)});
+                                Brick.createObject(scene,{"cell": game.gamedata.getItem(i)});
                             }
                             break;
                         case 2:
@@ -53,7 +53,7 @@ ApplicationWindow {
                             game.gamedata.getItem(i).source = "qrc:/img/EnemyUp.png";
                             var aiTank = Qt.createComponent("aiTank.qml");
                             if (aiTank.status === Component.Ready) {
-                                  aITank = aiTank.createObject(scene, {"cell": game.gamedata.getItem(i)});
+                                aITank = aiTank.createObject(scene, {"cell": game.gamedata.getItem(i)});
                             }
                             break;
                         case 9:
@@ -76,18 +76,11 @@ ApplicationWindow {
                 }
 
             }
-            Connections{
-                target: scene.aITank
-                 onShooting: {
-                     console.log(scene.gameContainer.qty)
-                 }
-
-            }
 
             Connections {
                 target: scene.playerTank
-                onShooting: {
-                    var bullet = scene.gameContainer.shoot(scene.playerTank.cell)
+                onShooted: {
+                    var bullet = scene.gameContainer.shoot(scene.playerTank.cell, 0)
                     var bulletCmpnt = Qt.createComponent("Bullet.qml");
                     if(bulletCmpnt.status === Component.Ready){
                         bulletCmpnt.createObject(scene,{"cell": bullet})
@@ -97,15 +90,66 @@ ApplicationWindow {
             Connections {
                 target: scene.aITank
                 onShooting: {
-                    var bullett = scene.gameContainer.shoot(scene.aITank.cell)
-                    var bulletCmpnt = Qt.createComponent("Bullet.qml");
-                    if (bulletCmpnt.status === Component.Ready) {
-                        bulletCmpnt.createObject(scene,{"cell": bullett})
+                    var bullett = scene.gameContainer.shoot(scene.aITank.cell,0)
+                    var bullettCmpnt = Qt.createComponent("Bullet.qml");
+                    if (bullettCmpnt.status === Component.Ready) {
+                        bullettCmpnt.createObject(scene,{"cell": bullett})
                     }
+                }
+            }
+            Connections {
+                target: scene.gameContainer
+                onCreatePlayer: {
+                    var tank = scene.gameContainer.createPlayerTank();
+                    tank.source = "qrc:/img/EnemyUp.png";
+                    var userTankCmpnt = Qt.createComponent("UserTank.qml");
+                    if (userTankCmpnt.status === Component.Ready) {
+                        scene.playerTank = userTankCmpnt.createObject(scene, {"cell": tank});
+                    }
+                }
+            }
+            Connections {
+                target: scene.gameContainer
+                onCreateEnemy: {
+                    var tmp = scene.gameContainer.createEnemyTank();
+                    tmp.source = "qrc:/img/EnemyUp.png";
+                    var aiTank = Qt.createComponent("aiTank.qml");
+                    if (aiTank.status === Component.Ready) {
+                        scene.aITank = aiTank.createObject(scene, {"cell": tmp});
+                    }
+                }
+
+            }
+            Connections {
+               target:scene.gameContainer
+               onTankOnLevelChanged:{
+                console.log("tanks left :" + scene.gameContainer.tanksOnLevel);
+               }
+            }
+            Connections {
+               target:scene.gameContainer
+               onGameOver: {
+                console.log("Game over! bye")
+               }
+            }
+            Connections {
+                target: scene.playerTank
+                onUp: {
+                    scene.gameContainer.move(scene.playerTank.cell,0);
+                }
+                onDown: {
+                    scene.gameContainer.move(scene.playerTank.cell,2);
+                }
+                onLeft: {
+                    scene.gameContainer.move(scene.playerTank.cell,3);
+                }
+                onRigth: {
+                    scene.gameContainer.move(scene.playerTank.cell,1);
                 }
             }
         }
     }
+
 }
 
 

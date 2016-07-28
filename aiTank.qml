@@ -8,8 +8,8 @@ Item {
     focus: true
     width: cell.width
     height: cell.height
-    x: cell.shapeRect.x - 13
-    y: cell.shapeRect.y - 13
+    x: cell.xCoord
+    y: cell.yCoord
 
     Image {
         id: img
@@ -38,5 +38,14 @@ Item {
         onShooting: {
             shooting();
         }
+    }
+    Connections{
+        target: cell
+        onHpChanged: {
+            if(cell.hp === 0) {
+                root.destroy();
+            }
+        }
+
     }
 }

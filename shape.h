@@ -24,6 +24,7 @@ class Shape : public QObject
     Q_PROPERTY(bool traversable READ traversable WRITE setTraversable NOTIFY traversableChanged)
     Q_PROPERTY(QRect shapeRect READ shapeRect WRITE setShapeRect NOTIFY shapeRectChanged)
     Q_PROPERTY(NOTIFY shooting)
+
 public:
     explicit Shape(QObject *parent = 0);
     Q_INVOKABLE void setYCoord(const int &yCoord);

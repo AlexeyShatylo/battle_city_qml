@@ -19,4 +19,12 @@ Item {
         height: root.height
         anchors.fill: root
     }
+    Connections {
+        target: cell
+        onHpChanged: {
+            if(cell.hp === 0) {
+                root.destroy();
+            }
+        }
+    }
 }

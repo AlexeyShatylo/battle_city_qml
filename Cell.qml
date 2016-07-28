@@ -15,4 +15,10 @@ Item {
         width: root.width
         height: root.height
     }
+    Connections {
+        target: cell
+        onTypeChanged: {
+            img.source = "";
+        }
+    }
 }

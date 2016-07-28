@@ -1,5 +1,73 @@
 #include "game.h"
 
+int Game::lifes() const
+{
+    return m_lifes;
+}
+
+void Game::setLifes(int lifes)
+{
+    if (m_lifes !=lifes) {
+        m_lifes = lifes;
+        emit lifesChanged(lifes);
+    }
+}
+
+Game::Game(QObject *parent) : QObject(parent)
+{
+    setWindowHeigth(676);
+    setWindowHeigth(676);
+    m_lifes = 3;
+    m_tanksOnLevel = 20;
+    qsrand(QTime::currentTime().msec());
+    globalTimer = new QTimer(this);
+    init();
+    connect(globalTimer, SIGNAL(timeout()),this,SLOT(startGame()));
+    globalTimer->start(50);
+}
+void Game::init() {
+    initTiles();
+    initGameContainer();
+}
+
+void Game::initGameContainer ()
+{
+    for(int i = 0; i < m_tileList.size(); i++) {
+        m_gameItemsContainer.append(m_tileList.at(i));
+    }
+    m_base = new Shape(this);
+    m_base->setYCoord(624);
+    m_base->setXCoord(312);
+    m_base->setType(ShapeType::Base);
+    m_base->setHeight(tankHeigth);
+    m_base->setWidth(tankWidth);
+    m_gameItemsContainer.append(m_base);
+    createPlayerTank();
+    createEnemyTank();
+}
+Shape* Game::createPlayerTank() {
+    Shape* userTank = new Shape(this);
+    userTank->setYCoord(676 - 52 -13);
+    userTank->setXCoord(221);
+    userTank->setType(ShapeType::PlayerTank);
+    userTank->setHeight(tankHeigth);
+    userTank->setWidth(tankWidth);
+    m_gameItemsContainer.append(userTank);
+    return userTank;
+}
+
+int Game::tanksOnLevel() const
+{
+    return m_tanksOnLevel;
+}
+
+void Game::setTanksOnLevel(int value)
+{
+    if(m_tanksOnLevel != value ) {
+        m_tanksOnLevel = value;
+        emit tankOnLevelChanged(value);
+    }
+}
 Shape *Game::shooter() const
 {
     return m_shooter;
@@ -13,49 +81,12 @@ void Game::setShooter(Shape *shooter)
     }
 }
 
-Game::Game(QObject *parent) : QObject(parent)
-{
-    setWindowHeigth(676);
-    setWindowHeigth(676);
-    qsrand(QTime::currentTime().msec());
-    globalTimer = new QTimer(this);
-    init();
-    connect(globalTimer, SIGNAL(timeout()),this,SLOT(startGame()));
-    globalTimer->start(100);
-}
-void Game::init() {
-    initTiles();
-    initGameContainer();
-}
-
-void Game::initGameContainer ()
-{
-    for(int i = 0; i < m_tileList.size(); i++) {
-        m_gameItemsContainer.append(m_tileList.at(i));
+bool Game::isGameOver() {
+    if(!m_tanksOnLevel && !m_lifes && !m_base  ) {
+        emit gameOver();
+        return true;
     }
-    Shape* base = new Shape;
-    base->setYCoord(624);
-    base->setXCoord(312);
-    base->setType(ShapeType::Base);
-    base->setHeight(tankHeigth);
-    base->setWidth(tankWidth);
-    m_gameItemsContainer.append(base);
-
-    Shape* userTank = new Shape;
-    userTank->setYCoord(624);
-    userTank->setXCoord(221);
-    userTank->setType(ShapeType::PlayerTank);
-    userTank->setHeight(tankHeigth);
-    userTank->setWidth(tankWidth);
-    m_gameItemsContainer.append(userTank);
-
-    Shape* aiTank = new Shape;
-    aiTank->setType(ShapeType::AiTank);
-    aiTank->setYCoord(0);
-    aiTank->setXCoord(0);
-    aiTank->setHeight(tankHeigth);
-    aiTank->setWidth(tankWidth);
-    m_gameItemsContainer.append(aiTank);
+    return false;
 }
 
 QList<Shape *> Game::getGameItemsContainer() const
@@ -83,17 +114,27 @@ bool Game::mapLoaded ()
 bool Game::isMovePossible(Shape* movingShape, int moveDir) {
     movingShape->setDirection(moveDir);
     if (moveDir == Direction::Up) {
-
-        if(movingShape->yCoord() >= 0 && movingShape->yCoord() <= 676 ) {
-            for (int i = 0; i < m_gameItemsContainer.size(); i++) {
+        if ((movingShape->yCoord() >= 0 && movingShape->yCoord() <= 676)) {
+            for (int i = m_gameItemsContainer.size() - 1; i >= 0; i--) {
                 if ((m_gameItemsContainer.at(i)->type() == ShapeType::Empty)
                         && (m_gameItemsContainer.at(i)->shapeRect().contains(movingShape->xCoord(), movingShape->yCoord() - step, false))) {
                     return true;
                 }
-
+                else if(movingShape->type() == ShapeType::Bullet && m_gameItemsContainer.at(i)->type() != ShapeType::Empty &&
+                        (m_gameItemsContainer.at(i)->shapeRect().contains(movingShape->xCoord(), movingShape->yCoord() - step, false)
+                         && movingShape->parent() != m_gameItemsContainer.at(i))) {
+                    m_gameItemsContainer.at(i)->setHp(0);
+                    m_gameItemsContainer.at(i)->setType(ShapeType::Empty);
+                    for (int i = m_gameItemsContainer.size() - 1 ; i >= 0; i--) {
+                        if(m_gameItemsContainer.at(i) == movingShape) {
+                            movingShape->setHp(0);
+                            m_gameItemsContainer.removeAt(i);
+                            return false;
+                        }
+                    }
+                    return false;
+                }
             }
-        }else {
-            return false;
         }
     }
     if (moveDir == Direction::Down) {
@@ -103,37 +144,69 @@ bool Game::isMovePossible(Shape* movingShape, int moveDir) {
                         && (m_gameItemsContainer.at(i)->shapeRect().contains(movingShape->xCoord(), movingShape->yCoord() + step, false))) {
                     return true;
                 }
-                if ((movingShape->yCoord() == 0 || movingShape->yCoord() == 676) && movingShape->type() == ShapeType::Bullet ) {
+                else if(movingShape->type() == ShapeType::Bullet && m_gameItemsContainer.at(i)->type() != ShapeType::Empty &&
+                        (m_gameItemsContainer.at(i)->shapeRect().contains(movingShape->xCoord(), movingShape->yCoord() + step, false)&& movingShape->parent() != m_gameItemsContainer.at(i))) {
+                    m_gameItemsContainer.at(i)->setHp(0);
+                    m_gameItemsContainer.at(i)->setType(ShapeType::Empty);
+                    for (int i = m_gameItemsContainer.size() - 1 ; i >= 0; i--) {
+                        if(m_gameItemsContainer.at(i) == movingShape) {
+                            movingShape->setHp(0);
+                            m_gameItemsContainer.removeAt(i);
+                            return false;
+                        }
 
+                    }
+                    return false;
                 }
             }
-        }else {
-            return false;
         }
     }
     if (moveDir == Direction::Left) {
-        if (movingShape->xCoord() >= 0 && movingShape->xCoord() <= 676) {
-            for (int i = 0; i < m_gameItemsContainer.size(); i++) {
+        if (movingShape->xCoord() >= 0 && movingShape->xCoord() <=676 ) {
+
+            for (int i = m_gameItemsContainer.size() - 1; i >= 0; i--) {
                 if ((m_gameItemsContainer.at(i)->type() == ShapeType::Empty )
                         && (m_gameItemsContainer.at(i)->shapeRect().contains(movingShape->xCoord() - step, movingShape->yCoord(), false))) {
                     return true;
                 }
-            }
-        }else {
-            return false;
-        }
-    }
-
-    if (moveDir == Direction::Right) {
-        if(movingShape->xCoord() >= 0 && movingShape->xCoord() <= 676) {
-            for (int i = 0; i < m_gameItemsContainer.size(); i++) {
-                if ((m_gameItemsContainer.at(i)->type() == ShapeType::Empty )
-                        && (m_gameItemsContainer.at(i)->shapeRect().contains(movingShape->xCoord() + step, movingShape->yCoord(), false))) {
-                    return true;
+                else if(movingShape->type() == ShapeType::Bullet && m_gameItemsContainer.at(i)->type() != ShapeType::Empty &&
+                        (m_gameItemsContainer.at(i)->shapeRect().contains(movingShape->xCoord() - step, movingShape->yCoord(), false) && (movingShape->parent() != m_gameItemsContainer.at(i)))) {
+                    m_gameItemsContainer.at(i)->setType(ShapeType::Empty);
+                    m_gameItemsContainer.at(i)->setHp(0);
+                    for (int i = m_gameItemsContainer.size() - 1 ; i >= 0; i--) {
+                        if(m_gameItemsContainer.at(i) == movingShape) {
+                            movingShape->setHp(0);
+                            m_gameItemsContainer.removeAt(i);
+                            return false;
+                        }
+                    }
+                    return false;
                 }
             }
-        }else {
-            return false;
+        }
+    }
+    if (moveDir == Direction::Right) {
+        if(movingShape->xCoord() >= 0 && movingShape->xCoord() <= 676) {
+            for (int i = m_gameItemsContainer.size() - 1; i >= 0; i--) {
+                if ((m_gameItemsContainer.at(i)->type() == ShapeType::Empty )
+                        && (m_gameItemsContainer.at(i)->shapeRect().contains(movingShape->xCoord() + 2*step, movingShape->yCoord(), false))) {
+                    return true;
+                }
+                else if(movingShape->type() == ShapeType::Bullet && m_gameItemsContainer.at(i)->type() != ShapeType::Empty &&
+                        (m_gameItemsContainer.at(i)->shapeRect().contains(movingShape->xCoord() + step + 13, movingShape->yCoord(), false)
+                         && movingShape->parent() != m_gameItemsContainer.at(i))) {
+                    m_gameItemsContainer.at(i)->setType(ShapeType::Empty);
+                    for (int i = m_gameItemsContainer.size() - 1 ; i >= 0; i--) {
+                        if(m_gameItemsContainer.at(i) == movingShape) {
+                            movingShape->setHp(0);
+                            m_gameItemsContainer.at(i)->setHp(0);
+                            m_gameItemsContainer.removeAt(i);
+                            return false;
+                        }
+                    }
+                    return false;
+                }
+            }
         }
     }
     return false;
@@ -147,27 +220,52 @@ int Game::randomMove(){
 }
 
 int Game::shotOrMove(){
-    int sOm = qrand() % 2;
+    int sOm = qrand() % 12;
     return sOm;
+}
+void Game::check() {
+    bool isAiTank = false;
+    bool isPlayerTank = false;
+    for( int i = 0; i < m_gameItemsContainer.size(); i++) {
+        if (m_gameItemsContainer.at(i)->type() == ShapeType::PlayerTank ) {
+            isPlayerTank = true;
+        }
+        if (m_gameItemsContainer.at(i)->type() == ShapeType::AiTank) {
+            isAiTank = true;
+        }
+    }
+    if(isAiTank == false && m_tanksOnLevel) {
+        emit createEnemy();
+    }
+    if ((isPlayerTank == false) && m_lifes) {
+        emit createPlayer();
+    }
 }
 
 void Game::startGame()
 {
     Shape* currentObject;
+    bool isCreated = false;
     for (int i = 0; i < m_gameItemsContainer.size(); i++) {
         if ((ShapeType::AiTank == m_gameItemsContainer.at(i)->type())) {
             currentObject = m_gameItemsContainer.at(i);
-            if (shotOrMove() == Behavior::Movement) {
+            int sOm = shotOrMove();
+            if ( sOm == Behavior::Movement) {
                 move(currentObject, randomMove());
             }
-            if (shotOrMove() == Behavior::Shoot) {
-                shoot(currentObject);
+            if (sOm == Behavior::Shoot) {
+                shoot(currentObject,isCreated);
+                isCreated = true;
+                currentObject->shoot();
             }
         }
         if (ShapeType::Bullet == m_gameItemsContainer.at(i)->type()) {
             move(m_gameItemsContainer.at(i), m_gameItemsContainer.at(i)->direction());
         }
     }
+    isGameOver();
+    check();
+
 }
 bool Game::move(Shape* movingShape, int moveDir) {
     bool possible = isMovePossible(movingShape,moveDir);
@@ -189,29 +287,34 @@ bool Game::move(Shape* movingShape, int moveDir) {
             break;
         }
         return true;
-    } else /*if(movingShape->type() == ShapeType::Bullet && !possible) {
+    }
+    else if( movingShape->type() == ShapeType::Bullet && !possible) {
         for (int i = 0; i < m_gameItemsContainer.size(); i++) {
-            if (movingShape == m_gameItemsContainer.at(i)) {
+            if( m_gameItemsContainer.at(i) == movingShape)
+            {
+                movingShape->setHp(0);
                 m_gameItemsContainer.removeAt(i);
-                delete movingShape;
             }
         }
-    }*/
+    }
     return false;
 }
-Shape* Game::shoot(Shape* shooter) {
-    setShooter(shooter);
-    Shape* bullet = new Shape();
-    bullet->setType(ShapeType::Bullet);
-    bullet->setWidth(tileWidth);
-    bullet->setHeight(tileHeigth);
-    bullet->setDirection(m_shooter->direction());
-    bullet->setXCoord(m_shooter->shapeRect().center().x());
-    bullet->setYCoord(m_shooter->shapeRect().center().y());
-    m_gameItemsContainer.append(bullet);
-    emit m_shooter->shooting();
-    QQmlEngine::setObjectOwnership(bullet,QQmlEngine::CppOwnership);
-    return bullet;
+Shape* Game::shoot(Shape* shooter, bool isCreated) {
+    if(!isCreated) {
+        isCreated = true;
+        Shape* bullet = new Shape(shooter);
+        QQmlEngine::setObjectOwnership(bullet,QQmlEngine::CppOwnership);
+        bullet->setType(ShapeType::Bullet);
+        bullet->setWidth(tileWidth);
+        bullet->setHeight(tileHeigth);
+        bullet->setDirection(shooter->direction());
+        bullet->setXCoord((shooter->shapeRect().center().x()) );
+        bullet->setYCoord((shooter->shapeRect().center().y()) );
+        bullet->setHp(1);
+        m_gameItemsContainer.append(bullet);
+        return bullet;
+    }
+    return nullptr;
 }
 
 bool Game::initTiles()
@@ -220,8 +323,8 @@ bool Game::initTiles()
     for (int i = 0; i < m_map.size(); i++) {
         Shape* tile = new Shape(this);
         tile->setType(m_map[i].digitValue());
-        tile->setHeight(26);
-        tile->setWidth(26);
+        tile->setHeight(tileHeigth);
+        tile->setWidth(tileWidth);
         m_tileList.append(tile);
 
     }
@@ -266,6 +369,24 @@ void Game::setWindowHeigth(int windowHeigth)
         m_windowHeigth = windowHeigth;
         emit windowsHeigthChanged(windowHeigth);
     }
+}
+
+Shape* Game::createEnemyTank()
+{
+    if( m_tanksOnLevel ) {
+        Shape* aiTank = new Shape(this);
+        aiTank->setType(ShapeType::AiTank);
+        aiTank->setYCoord(0);
+        aiTank->setXCoord(0);
+        aiTank->setHeight(tankHeigth);
+        aiTank->setWidth(tankWidth);
+        m_gameItemsContainer.append(aiTank);
+        int left = m_tanksOnLevel - 1;
+        setTanksOnLevel(left);
+
+        return aiTank;
+    }
+    return nullptr;
 }
 
 QList<Shape *> Game::tankList() const
