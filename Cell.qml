@@ -19,6 +19,7 @@ Item {
         target: cell
         onTypeChanged: {
             img.source = "";
+            root.destroy();
         }
     }
 }

@@ -1,11 +1,14 @@
 TEMPLATE = app
 
-QT += qml quick
+QT += qml quick \
+        multimedia
 CONFIG += c++11
 
 SOURCES += main.cpp \
     shape.cpp \
-    game.cpp
+    game.cpp \
+    directionenumqml.cpp \
+    shapetypeenumqml.cpp
 
 RESOURCES += qml.qrc
 
@@ -17,6 +20,8 @@ include(deployment.pri)
 
 HEADERS += \
     shape.h \
-    game.h
+    game.h \
+    directionenumqml.h \
+    shapetypeenumqml.h
 
 DISTFILES +=

@@ -9,11 +9,10 @@
 #include <QString>
 #include <QTimer>
 #include <QTime>
+#include <QPair>
 #include <QRect>
 #include <QQmlEngine>
-#include <QtAlgorithms>
 enum Behavior{Movement = 0, Shoot};
-
 class Game : public QObject
 {
     Q_OBJECT
@@ -38,27 +37,28 @@ private:
     QString m_map;
     QTimer* globalTimer;
     QTimer* bulletMoveTimer;
-    int m_tanksOnLevel;
-    int m_lifes;
+    int m_AiTanksOnLevel;
+    int m_PlayersLifes;
     Shape* m_base;
 public:
     explicit Game(QObject *parent = 0);
-
     const int step = 13;
+    const int width = 676;
+    const int heigth = 676;
     const int tileWidth = 26;
     const int tileHeigth = 26;
-    const int tankWidth= 52;
+    const int tankWidth = 52;
     const int tankHeigth = 52;
 
     bool initTiles();
     bool checkMovement();
-    bool mapLoaded();
+    bool isMapLoaded();
     void initGameContainer();
     int windowHeigth() const;
     int windowWidth() const;
     int getQty() const;
     Q_INVOKABLE Shape* getTile(int index);
-    Q_INVOKABLE  Shape *getItem(int index);
+    Q_INVOKABLE  Shape* getItem(int index);
 
 
     QList<Shape*> getGameItemsContainer() const;
@@ -71,6 +71,7 @@ public:
     Q_INVOKABLE bool move(Shape* movingShape,int moveDir);
     Q_INVOKABLE bool isMovePossible(Shape *movingShape, int moveDir);
     Q_INVOKABLE Shape *shoot(Shape *shooter, bool isCreated);
+
     int shotOrMove();
     int randomMove();
     void init();
@@ -104,6 +105,7 @@ public slots:
 
 private slots:
     void startGame();
+
 };
 
 #endif // GAME_H

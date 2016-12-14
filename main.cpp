@@ -4,6 +4,8 @@
 #include <QQmlComponent>
 #include "shape.h"
 #include "game.h"
+#include "directionenumqml.h"
+#include "shapetypeenumqml.h"
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -11,6 +13,9 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<Shape>("shape", 1, 0, "MyObject");
     qmlRegisterType<Game>("shape", 1, 0, "MyGame");
+    qmlRegisterType<DirectionEnumQml>("shape",1,0,"Direction");
+    qmlRegisterType<ShapeTypeEnumQml>("shape",1,0,"ShapeType");
     appEngine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
     return app.exec();
 }

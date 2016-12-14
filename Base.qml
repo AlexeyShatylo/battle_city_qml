@@ -3,7 +3,6 @@ import shape 1.0
 
 Item {
     property MyObject cell
-    property bool passeble : false
 
     id: root
     width: cell.width

@@ -1,35 +1,30 @@
 import QtQuick 2.5
 import shape 1.0
-Item {
+FocusScope{
 
     signal up()
-    signal rigth()
+    signal right()
     signal down()
     signal left()
     signal shooted()
     property MyObject cell
     property MyGame game
+    focus: true
 
     id: root
-    focus: true
     width: 52
     height: 52
     x: cell.xCoord
     y: cell.yCoord
 
+
     Image {
         id: img
-        source: cell.source
-        width: 52
-        height: 52
+        source: root.cell.source
+        width: root.cell.width
+        height: root.cell.height
         anchors.centerIn: root
-        rotation: cell.direction * 90
-    }
-    onXChanged: {
-        console.log(root.x)
-    }
-    onYChanged: {
-        console.log(root.y)
+        rotation: root.cell.direction * 90
     }
 
     Keys.onPressed: {
@@ -37,8 +32,7 @@ Item {
             up();
         }
         if (event.key === Qt.Key_Right) {
-            rigth();
-
+            right();
         }
         if (event.key === Qt.Key_Down) {
             down();
@@ -49,6 +43,15 @@ Item {
         if (event.key === Qt.Key_Space) {
             shooted();
         }
+    }
+    Connections{
+        target: cell
+        onHpChanged: {
+            if (cell.hp === 0) {
+                root.destroy();
+            }
+        }
+
     }
 
 }

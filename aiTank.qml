@@ -20,15 +20,15 @@ Item {
     Connections {
         target: cell
         onDirectionChanged:{
-            if(cell.direction === 0)
+            if(cell.direction === Direction.Up)
                 img.rotation = 0
-            if(cell.direction === 1) {
+            if(cell.direction === Direction.Right) {
                 img.rotation = 90;
             }
-            if(cell.direction === 2) {
+            if(cell.direction === Direction.Down) {
                 img.rotation = 180;
             }
-            if(cell.direction === 3) {
+            if(cell.direction === Direction.Left) {
                 img.rotation = 270;
             }
         }

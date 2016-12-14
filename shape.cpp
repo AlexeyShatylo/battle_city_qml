@@ -82,7 +82,7 @@ void Shape::setWidth(int width)
 {
     if (m_width != width) {
         m_width = width;
-        setShapeRect(QRect(m_xCoord,m_yCoord,m_width,m_height));
+        setShapeRect(QRect(m_xCoord, m_yCoord, m_width, m_height));
         emit widthChanged(width);
     }
 }
@@ -96,7 +96,7 @@ void Shape::setHeight(int height)
 {
     if (m_height != height) {
         m_height = height;
-        setShapeRect(QRect(m_xCoord,m_yCoord,m_width,m_height));
+        setShapeRect(QRect(m_xCoord, m_yCoord, m_width, m_height));
         emit heightChanged(height);
     }
 }
@@ -123,8 +123,9 @@ void Shape::setYCoord(const int &yCoord)
 {
     if (m_yCoord != yCoord) {
         m_yCoord = yCoord;
-        setShapeRect(QRect(m_xCoord,m_yCoord,m_width,m_height));
+        setShapeRect(QRect(m_xCoord, m_yCoord, m_width, m_height));
         emit yCoordChanged(yCoord);
+        emit shapeRectChanged();
     }
 }
 
